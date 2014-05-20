@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+set -e
+
+rm -fr npm
+mkdir npm
+
+(
+  set -x
+  cp Changes npm
+  for coffee in $(find lib | grep -E '\.coffee$'); do
+    js="${coffee/\.coffee/.js}"
+    coffee --compile "$coffee" > "npm/$js"
+  done
+  [ -e bin ] && cp -r bin npm
+  [ -e eg ] && cp -r eg npm
+  cp -r test npm/t
+  ./.pkg/bin/make-package-json > npm/package.json
+)
+
+for kwim in $(find doc -type f -name '*.kwim'); do
+  md="${kwim/.kwim/.md}"
+  md="npm/$md"
+  mkdir -p "$(dirname "$md")"
+  if grep '^====' "$kwim" &> /dev/null; then
+    (
+      set -x
+      kwim --to=md --complete --wrap "$kwim" > "$md"
+    )
+  else
+    (
+      set -x
+      kwim --to=md --complete --wrap "$kwim" > "$md"
+    )
+  fi
+done
+
+# vim: set sw=2 lisp:
