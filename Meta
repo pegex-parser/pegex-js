@@ -1,26 +1,27 @@
-name: Pegex
-description: Acmeist PEG Parsing Framework
-version: 0.0.3
-licenses:
-- type: MIT
-  url: https://raw.github.com/ingydotnet/pegex-cd/master/LICENSE
-copyright: 2010-2012
+=meta: 0.0.1
 
+name: Pegex
+version: 0.0.1
+abstract: Acmeist PEG Parser Framework
+homepage: http://pegex.org
+tag: [pegex, parsing, language, acmeism]
+
+license: MIT
+copyright: 2010-2012
 author:
   name: Ingy döt Net
   email: ingy@ingy.net
-  url: http://ingy.net
+  github: ingydotnet
+  twitter: ingydotnet
+  freenode: ingy
+  homepage: http://ingy.net
 
-keywords: [pegex, parsing, language, acmeism]
+devel:
+  git: git@github.org/ingydotnet/pegex-pm
+  irc: irc.freenode.net/pegex
+  bug: https://github.com/ingydotnet/pegex-pm/issues/
 
-homepage: http://pegex.org
-repository:
-  url: git://github.com/ingydotnet/pegex-cd.git
-  type: git
-bugs:
-  url: https://github.com/ingydotnet/pegex-cd/issues
-
-npm:
+=npm:
   name: pegex
   main: ./lib/Pegex
   directories:
