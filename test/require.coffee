@@ -6,6 +6,8 @@ modules = [
   'Pegex/Module'
   'Pegex/Parser'
   'Pegex/Receiver'
+  'Pegex/Tree'
+  'Pegex/Tree/Wrap'
   'Pegex/Grammar/Atoms'
   'Pegex/Parser/Indent'
   'Pegex/Pegex/AST'
