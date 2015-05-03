@@ -86,30 +86,13 @@ process.on 'exit', ->
 
 # Run every test requested, recording failures.
 exports.run = (paths) ->
-  paths ?= process.argv.slice(2)
-  paths = ['test'] if not paths.length
-  files = []
-  find = (path) ->
-    try
-      stat = fs.lstatSync path
-    catch error
-      return
-    if stat.isFile()
-      if path.match /\.coffee$/i
-        # XXX this is a local hack
-        if not path.match /\/src\//
-          files.push path
-    else if stat.isDirectory()
-      for p in fs.readdirSync(path)
-        find path + '/' + p
+  paths ?= process.argv.slice(4)
 
-  for path in paths
-    find path
-
-  for file in files
+  for file in paths
     currentFile = filename = file
     code = String fs.readFileSync filename
     try
+      log filename, green
       require.main = {}
       CoffeeScript.run code, {filename}
     catch error

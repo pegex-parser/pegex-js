@@ -23,7 +23,9 @@ global.Pegex.Compiler = exports.Compiler = class Compiler
     @
 
   parse: (input) ->
-    parser = new Pegex.Parser new Pegex.Pegex.Grammar, new Pegex.Pegex.AST
+    parser = new Pegex.Parser
+      grammar: new Pegex.Pegex.Grammar
+      receiver: new Pegex.Pegex.AST
     @tree = parser.parse input
     @
 

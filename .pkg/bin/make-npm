@@ -9,12 +9,13 @@ mkdir npm
   set -x
   cp Changes npm
   for coffee in $(find lib | grep -E '\.coffee$'); do
-    js="${coffee/\.coffee/.js}"
-    coffee --compile "$coffee" > "npm/$js"
+    js="npm/${coffee/\.coffee/.js}"
+    mkdir -p "$(dirname $js)"
+    coffee --print --compile "$coffee" > "$js"
   done
-  [ -e bin ] && cp -r bin npm
-  [ -e eg ] && cp -r eg npm
-  cp -r test npm/t
+  [ -e bin ] && cp -r bin npm/
+  [ -e eg ] && cp -r eg npm/
+  cp -r test npm/
   ./.pkg/bin/make-package-json > npm/package.json
 )
 

@@ -3,6 +3,8 @@ Pegex
 
 An Acmeist PEG Framework
 
+= Description
+
 Pegex is a PEG (Parser Expression Grammar) framework where each low level
 match is a regular expression call. It is intended to work in all programming
 languages the support regular expressions.

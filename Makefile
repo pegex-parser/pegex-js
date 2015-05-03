@@ -32,14 +32,14 @@ help:
 	@echo ''
 
 test:
-	coffee -e '(require "./test/lib/test/harness").run()' $@
+	coffee -e '(require "./test/lib/test/harness").run()' $@/*.coffee
 
 install: distdir
 	(cd $(DISTDIR); npm install -g .)
 	make clean
 
 doc:
-	kwim --complete --wrap doc/$(NAME).kwim > ReadMe.pod
+	swim --to=pod --complete=1 --wrap=1 doc/$(NAME).swim > ReadMe.pod
 
 npm:
 	./.pkg/bin/make-npm
@@ -71,7 +71,7 @@ publish-dryrun: check-release dist
 	rm $(DIST)
 
 clean purge:
-	rm -fr npm $(DIST) $(DISTDIR)
+	rm -fr name $(DIST) $(DISTDIR)
 
 upgrade:
 	(PKGREPO=$(PWD) make -C ../javascript-pkg do-upgrade)

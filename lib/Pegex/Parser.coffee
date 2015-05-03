@@ -1,17 +1,12 @@
-###
-name:      Pegex.Parser
-abstract:  Pegex Parser module
-author:    Ingy döt Net <ingy@ingy.net>
-license:   MIT
-copyright: 2012
-###
-
 require '../Pegex/Input'
 require '../Pegex/Receiver'
 
-global.Pegex.Parser = exports.Parser = class Parser
+global.Pegex.Parser =
+class exports.Parser
+  version: '0.0.48'
 
-  constructor: (@grammar, @receiver) ->
+  constructor: (x = {}) ->
+    {@grammar, @receiver} = x
     @receiver ?= new Pegex.Receiver
     @throw_on_error = on
     @wrap = @receiver.wrap ? no

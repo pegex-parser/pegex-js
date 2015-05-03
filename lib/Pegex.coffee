@@ -3,31 +3,30 @@ name:      Pegex
 abstract:  Acmeist PEG Parsing Framework
 author:    Ingy döt Net <ingy@ingy.net>
 license:   MIT
-copyright: 2010-2012
+copyright: 2010-2015
 ###
 
-global.Pegex = class Pegex
-# XXX version needs to come from package.yaml or cdent.yaml
-global.Pegex.VERSION = '0.0.3'
+global.Pegex =
+class Pegex
+  VERSION: '0.0.3'
 
-exports.pegex = (grammar_text, {receiver, wrap} = {}) ->
-  require './Pegex/Parser'
-  require './Pegex/Grammar'
+{Parser} = require './Pegex/Parser'
 
-  unless grammar_text?
-    throw "pegex() requires at least 1 argument, a pegex grammar string"
-  new Pegex.Parser new Pegex.Grammar(text: grammar_text), _get_receiver receiver, wrap
-
-_get_receiver = (receiver, wrap) ->
-  if receiver?
-    if typeof receiver == 'string'
-      require receiver
-      receiver = new receiver
-  else
-    require './Pegex/Receiver'
-    receiver = new Pegex.Receiver
-    if ! wrap?
-      receiver.wrap = on
-  if wrap?
-    receiver.wrap = wrap
-  receiver
+exports.pegex = (grammar, receiver) ->
+  throw "Argument 'grammar' required in function 'pegex'" \
+    unless grammar?
+  if typeof grammar is 'string' or grammar instanceof global.Pegex.Input
+    {Grammar} = require './Pegex/Grammar'
+    grammar = new Grammar {text: grammar}
+  if not receiver?
+#     {Receiver} = require './Pegex/Tree/Wrap'
+#     receiver = new Receiver
+    {Receiver} = require './Pegex/Receiver'
+    receiver = new Receiver
+    receiver.wrap = on
+  else if typeof receiver is String
+    receiver = require receiver
+    receiver = new receiver
+  new Parser
+    grammar: grammar
+    receiver: receiver
