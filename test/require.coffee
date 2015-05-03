@@ -4,6 +4,7 @@ modules = [
   'Pegex/Grammar'
   'Pegex/Input'
   'Pegex/Module'
+  'Pegex/Optimizer'
   'Pegex/Parser'
   'Pegex/Receiver'
   'Pegex/Tree'

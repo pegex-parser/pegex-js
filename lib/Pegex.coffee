@@ -12,15 +12,15 @@ class Pegex
 
 require './Pegex/Parser'
 
-exports.pegex = (grammar, receiver) ->
+exports.pegex = (grammar, receiver)->
   throw "Argument 'grammar' required in function 'pegex'" \
     unless grammar?
   if typeof grammar is 'string' or grammar instanceof Pegex.Input
     require './Pegex/Grammar'
-    grammar = new Pegex.Grammar {text: grammar}
+    grammar = new Pegex.Grammar text: grammar
   if not receiver?
-#     {Tree} = require './Pegex/Tree/Wrap'
-#     receiver = new Tree
+#     require './Pegex/Tree/Wrap'
+#     receiver = new Pegex.Tree.Wrap
     require './Pegex/Receiver'
     receiver = new Pegex.Receiver
     receiver.wrap = on

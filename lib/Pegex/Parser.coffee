@@ -1,12 +1,10 @@
 require '../Pegex/Input'
 require '../Pegex/Receiver'
 
-global.Pegex.Parser =
-class exports.Parser
+class Pegex.Parser
   version: '0.0.48'
 
-  constructor: (x = {}) ->
-    {@grammar, @receiver} = x
+  constructor: ({@grammar, @receiver})->
     @receiver ?= new Pegex.Receiver
     @throw_on_error = on
     @wrap = @receiver.wrap ? no
