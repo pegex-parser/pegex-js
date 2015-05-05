@@ -1,18 +1,21 @@
 class Pegex.Optimizer
-  constructor: ->
-    @parser ? throw ""
-    @grammar ? throw ""
-    @receiver ? throw ""
+  constructor: ({@parser, @grammar, @receiver})->
+    @parser? or
+      throw "Missing attribute 'parser' for Pegex.Optimizer"
+    @grammar? or
+      throw "Missing attribute 'grammar' for Pegex.Optimizer"
+    @receiver? or
+      throw "Missing attribute 'receiver' for Pegex.Optimizer"
 
   optimize_grammar: (start)->
-    tree = @grammar[tree]
+    tree = @grammar.tree
     return if tree['+optimized']
-    @set_max_parse if @parser[maxparse]
+    @set_max_parse if @parser.maxparse?
     @extra = {}
-    for name, $node of tree
+    for name, node of tree
       continue if typeof node is String
       @optimize_node node
-    # @optimize_node({'.ref' => $start})
+    @optimize_node '.ref': start
     extra = delete @extra
     for key, val of extra
       tree[key] = val
@@ -27,33 +30,34 @@ class Pegex.Optimizer
 
     for kind in ['ref', 'rgx', 'all', 'any', 'err', 'code', 'xxx']
       return if kind == 'xxx'
-      if node.rule = node[".$kind"]
-        delete node[".$kind"]
-        node.kind = $kind
+      if node.rule = node[".#{kind}"]
+        delete node[".#{kind}"]
+        node.kind = kind
         if kind == 'ref'
           rule = node.rule or throw ""
           if method = @grammar["rule_#{rule}"]?
+            console.log node
             node.method = @make_method_wrapper method
-          else if not @grammar.tree[$rule]?
-            if method = @grammar["$rule"]?
-              warn """
+          else if not @grammar.tree[rule]?
+            if method = @grammar[rule]?
+              console.warn """
 Warning:
 
-  You have a method called '$rule' in your grammar.
-  It should probably be called 'rule_$rule'.
+  You have a method called '#{rule}' in your grammar.
+  It should probably be called 'rule_#{rule}'.
 
 """
             throw "No rule '#{rule}' defined in grammar"
-        @node.method ?= @parser["match_#{kind}"] or throw ""
+        node.method ?= @parser["match_#{kind}"] or throw ""
         break
 
-    if node.kind =~ /^(?:all|any)$/
+    if node.kind.match /^(?:all|any)$/
       for n in node.rule
         @optimize_node n
     else if node.kind == 'ref'
       ref = node.rule
       rule = @grammar.tree[ref]
-      rule ?= @extra[ref] = {}
+      rule ||= @extra[ref] = {}
       if action = @receiver["got_#{ref}"]
         rule.action = action
       else if gotrule = @receiver.gotrule
@@ -61,7 +65,9 @@ Warning:
       if @parser.debug
         node.method = @make_trace_wrapper node.method
     else if node.kind == 'rgx'
-      throw node
+      # TODO Add ^ and compile re here
+      0
+      # xxx node
 
   make_method_wrapper: (method)->
     return (parser, ref, parent)->
@@ -75,7 +81,7 @@ Warning:
       )
 
   make_trace_wrapper: (method)->
-    (ref, parent)->
+    return (ref, parent)->
       asr = parent['+asr']
       note = \
         if asr == -1 then '(!)' else \

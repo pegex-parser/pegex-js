@@ -11,7 +11,7 @@ require '../Pegex/Pegex/Grammar'
 require '../Pegex/Pegex/AST'
 require '../Pegex/Grammar/Atoms'
 
-global.Pegex.Compiler = exports.Compiler = class Compiler
+class Pegex.Compiler
   constructor: ->
     @tree = null
     @_tree = null

@@ -19,11 +19,8 @@ exports.pegex = (grammar, receiver)->
     require './Pegex/Grammar'
     grammar = new Pegex.Grammar text: grammar
   if not receiver?
-#     require './Pegex/Tree/Wrap'
-#     receiver = new Pegex.Tree.Wrap
-    require './Pegex/Receiver'
-    receiver = new Pegex.Receiver
-    receiver.wrap = on
+    require './Pegex/Tree/Wrap'
+    receiver = new Pegex.Tree.Wrap
   else if typeof receiver is String
     receiver = require receiver
     receiver = new receiver

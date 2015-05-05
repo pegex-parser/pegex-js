@@ -4,4 +4,4 @@
 
 test "Pegex.pegex export function works", ->
   tree = pegex('a: /(b)/').parse 'b'
-  deepEqual tree, { a: 'b' }
+  deepEqual tree, a: 'b'

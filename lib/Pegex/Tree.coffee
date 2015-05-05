@@ -1,7 +1,6 @@
 require '../Pegex/Receiver'
 
-global.Pegex.Tree =
-class exports.Tree extends Pegex.Receiver
+class Pegex.Tree extends Pegex.Receiver
 
   gotrule: (got)->
     if not got?

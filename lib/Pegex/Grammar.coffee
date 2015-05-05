@@ -1,7 +1,6 @@
 require '../Pegex'
 
-global.Pegex.Grammar =
-class exports.Grammar
+class Pegex.Grammar
   constructor: (_ = {}) ->
     {@file, @text, @tree} = _
     @make_tree

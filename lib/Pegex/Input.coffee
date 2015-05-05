@@ -1,6 +1,6 @@
 require '../Pegex'
 
-global.Pegex.Input = exports.Input = class Input
+class Pegex.Input
   constructor: (a = {}) ->
     {@string} = a
     {@file} = a

@@ -1,230 +1,191 @@
 require '../Pegex/Input'
-require '../Pegex/Receiver'
+require '../Pegex/Optimizer'
+
+Pegex.Constant ?= {}
+Pegex.Constant.Dummy ?= {}
 
 class Pegex.Parser
   version: '0.0.48'
 
-  constructor: ({@grammar, @receiver})->
-    @receiver ?= new Pegex.Receiver
-    @throw_on_error = on
-    @wrap = @receiver.wrap ? no
-    @input = ''
-    @buffer = ''
-    @error = null
+  constructor: ({@grammar, @receiver, @debug})->
+    @grammar? or
+      throw "Pegex.Parser object requires a grammar attribute"
+    @input = null
+    @debug ?=
+      process?.env.PEGEX_DEBUG ||
+      Pegex.Parser.Debug ? off
+    @throw_on_error ?= on
+
+  parse: (input, start) ->
+    start = start.replace(/-/g, '_') if start
+
     @position = 0
     @farthest = 0
-    @debug = Pegex.Parser.Debug ? off
 
-  parse: (input, start_rule) ->
-    # XXX Not sure why but sometimes start_rule is an Array
-    if start_rule instanceof Array
-      start_rule = start_rule.shift()
-    @input = input
-    if typeof @input == 'string'
-      @input = new Pegex.Input {string: @input}
-    @input.open()
+    @input = if input instanceof Pegex.Input \
+      then input \
+      else new Pegex.Input string: input
+
+    @input.open() \
+      unless @input._is_open
     @buffer = @input.read()
-    @grammar ?
-      throw "No 'grammar'. Can't parse"
 
-    if typeof @grammar == 'string'
-      Grammar = require '../' + grammar
-      @grammar = new Pegex.Grammar
-    else
-      @grammar.tree ?= @grammar.make_tree()
+    throw "No 'grammar'. Can't parse" \
+      unless @grammar
 
-    start_rule ?= @grammar.tree?['+toprule'] ? do =>
-      if @grammar.tree['TOP']
-        'TOP'
-      else
+    @grammar.tree ||= @grammar.make_tree()
+
+    start_rule_ref = start ||
+      @grammar.tree['+toprule']? && @grammar.tree['+toprule'] ||
+      @grammar.tree.TOP && 'TOP' or
         throw "No starting rule for Pegex.Parser.parse"
-    receiver = @receiver ?
-      throw "No 'receiver'. Can't parse"
-    if typeof receiver == 'string'
-      require '../' + receiver
-      @receiver = new receiver
+
+    throw "No 'receiver'. Can't parse" \
+      unless @receiver?
+
+    optimizer = new Pegex.Optimizer
+      parser: @
+      grammar: @grammar
+      receiver: @receiver
+
+    optimizer.optimize_grammar start_rule_ref
+
+    # Add circular ref.
     @receiver.parser = @
 
-    match = @match start_rule
-    return unless match
+    if @receiver.initial?
+      @rule = start_rule_ref
+      @parent = {}
+      @receiver.initial()
+
+    # TODO Make start_method in optimizer?
+    if @debug
+      match = optimizer.make_trace_wrapper(@match_ref)
+        .call @, start_rule_ref, '+asr': off
+    else
+      match = @match_ref start_rule_ref, {}
 
     @input.close()
 
-    return @receiver.data || match
-
-  match: (rule) ->
-    @receiver.initialize rule if @receiver.constructor::initialize
-    match = @match_next { '.ref': rule }
-    if ! match or @position < @buffer.length
+    if not match or @position < @buffer.length
       @throw_error "Parse document failed for some reason"
-      return
-    match = match[0]
-    match = @receiver.final match, rule if @receiver.constructor::final
-    unless match
-      match = {}
-      match[rule] = []
-    if rule == 'TOP'
-      match = match['TOP'] ? match
-    match
+      return;  # In case @throw_on_error is off
 
-  get_min_max: (next) ->
-    [min, max] = [ next['+min'], next['+max'] ]
-    if min?
-      if max?
-        [min, max]
-      else
-        [min, 0]
-    else
-      if max?
-        [0, max]
-      else
-        [1, 1]
+    if @receiver.final
+      @rule = start_rule_ref
+      @parent = {}
+      match = [ @receiver.final(match...) ]
 
-  match_next: (next) ->
-    return @match_next_with_sep next if next['.sep']
+    match[0]
 
-    [min, max] = @get_min_max next
-    assertion = next['+asr'] ? 0
-    keys = ['ref', 'rgx', 'all', 'any', 'err', 'code']
-    for key in keys when next[".#{key}"]?
-      kind = key
-      rule = next[".#{key}"]
+  match_next: (next)->
+    {rule, method, kind} = next
+    min = next['+min']
+    max = next['+max']
+    assertion = next['+asr']
 
-    [match, position, count, method] =
-      [[], @position, 0, "match_#{kind}"]
+    position = @position
+    match = []
+    count = 0
 
-    while return_ = @[method].call this, rule, next
+    while return_ = method.call @, rule, next
       position = @position unless assertion
       count++
       match.push return_...
       break if max == 1
-
+    if not count and min == 0 and kind == 'all'
+      match = [[]]
     if max != 1
-      match = [ match ]
-      @set_position position
-
+      if next['-flat']
+        _match = []
+        for m in match
+          if m instanceof Array
+            _match.push m...
+          else
+            _match.push m
+        match = _match
+      else
+        match = [match]
     result = (count >= min and (not max or count <= max))
     result ^= (assertion == -1)
+    if not result or assertion
+      @farthest = position \
+        if (@position = position) > @farthest
 
-    @set_position position if not result or assertion
-
-    match = [] if next['-skip']
-
-    result && match || 0
-
-  match_next_with_sep: (next) ->
-    [min, max] = @get_min_max next
-    keys = ['ref', 'rgx', 'all', 'any', 'err', 'code']
-    for key in keys when next[".#{key}"]?
-      kind = key
-      rule = next[".#{key}"]
-    separator = next['.sep']
-
-    [match, position, count, method, scount, [smin, smax]] =
-      [[], @position, 0, "match_#{kind}", 0, @get_min_max separator]
-
-    while return_ = @[method].call this, rule, next
-      position = @position
-      count++
-      match.push return_...
-      break unless return_ = @match_next separator
-      return2 = [ return_... ]
-      if return2.length
-        return2 = ['XXX'] if smax != 1
-        match.push return2...
-      scount++
-    if max != 1
-      match = [ match ]
-
-    result = (count >= min and (not max or count <= max))
-    @set_position position if count == scount and
-      not separator['+eok']
-
-    match = [] if next['-skip']
-    return result && match || 0
-
-  match_ref: (ref, parent) ->
-    rule = @grammar.tree[ref]
-    rule ||= if @::["match_rule_#{ref}"] then { '.code': ref } else
-        throw "\n\n*** No grammar support for '#{ref}'\n\n"
-    trace = not rule['+asr'] and @debug
-    @trace "try_#{ref}" if trace
-
-    match = if typeof rule == 'function' then rule.call @ else @match_next rule
-
-    if match
-      @trace "got_#{ref}" if trace
-      if not rule['+asr'] and not parent['-skip']
-        callback = "got_#{ref}"
-        sub = @receiver.constructor.prototype[callback]
-        if sub?
-          match = [ sub.call @receiver, match[0] ]
-        else if @wrap and not parent['-pass'] or parent['-wrap']
-          if match.length
-            value = match[0]
-            match = [{}]
-            match[0][ref] = value
-          else
-            match = []
+    if result
+      if next['-skip']
+        return []
+      else
+        return match
     else
-      @trace "not_#{ref}" if trace
-      match = 0
-    console.log match if match and @debug
-    match
+      return 0
 
-  xxx_terminator_hack: 0
-  xxx_terminator_max: 1000
-  match_rgx: (regexp, parent) ->
-    start = @position
-    if start >= @buffer.length and
-      @xxx_terminator_hack++ > @xxx_terminator_max
-        throw "Your grammar seems to not terminate at end or stream"
-    re = new RegExp regexp, 'g'
-    re.lastIndex = start
-    m = re.exec @buffer
-    # XXX Not sure how to match at 'start' position
-    return 0 if not m? or m.index != start
-    finish = re.lastIndex
-    match = []
+  match_rule: (position, match=[])->
+    @farthest = position \
+      if (@position = position) > @farthest
+    match = [ match ] if match.length > 1
+    {ref, parent} = @
+    rule = @grammar.tree[ref] \
+      or throw "No rule defined for '#{ref}'"
+
+    [ rule.action.call(@receiver, match...) ]
+
+  match_ref: (ref, parent)->
+    rule = @grammar.tree[ref] or throw "No rule defined for '#{ref}'"
+    match = @match_next(rule)
+    return unless match
+    return Pegex.Constant.Dummy unless rule.action?
+    @rule = ref
+    @parent = parent
+
+    # XXX Possible API mismatch.
+    # Not sure if we should "splat" the $match.
+    [ rule.action.call @receiver, match... ]
+
+  match_rgx: (regexp)->
+    re = new RegExp("^#{regexp}", 'g')
+    m = re.exec @buffer.substr(@position)
+    return unless m?
+
+    @position += re.lastIndex
+    @farthest = @position if @position > @farthest
+
+    captures = []
     for num in [1...(m.length)]
-      match.push(m[num])
-    match = [ match ] if m.length > 2
-    @set_position finish
-    return match
+      captures.push(m[num])
+    captures = [ captures ] if m.length > 2
+    return captures
 
-  match_all: (list, parent) ->
-    pos = @position
+  match_all: (list)->
+    position = @position
     set = []
     len = 0
     for elem in list
       if match = @match_next elem
-        continue if elem['+asr'] or elem['-skip']
-        set.push match...
-        len++
+        if not(elem['+asr'] or elem['-skip'])
+          set.push match...
+          len++
       else
-        @set_position pos
-        return 0
+        @farthest = position \
+          if (@position = position) > @farthest
+        return
     set = [ set ] if len > 1
     return set
 
-  match_any: (list, parent) ->
+  match_any: (list)->
     for elem in list
       if match = @match_next elem
         return match
-    return 0
+    return null
 
-  match_err: (error) ->
+  match_err: (error)->
     @throw_error error
 
   match_code: (code) ->
     method = "match_rule_#{code}"
     method.call @
 
-  set_position: (position) ->
-    @position = position
-    @farthest = position if position > @farthest
-
-  trace: (action) ->
+  trace: (action)->
     indent = action.match /^try_/
     @indent ||= 1
     @indent-- unless indent
