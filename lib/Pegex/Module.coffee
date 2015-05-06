@@ -1,8 +1,9 @@
 require '../Pegex/Grammar'
 require '../Pegex/Parser'
 
-exports.Module = class Module
-  parse: (input) ->
+class Pegex.Module
+
+  parse: (input)->
     parser = new @parser @grammar @receiver
     parser.parse input
 

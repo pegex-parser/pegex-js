@@ -5,8 +5,6 @@ Pegex.Constant ?= {}
 Pegex.Constant.Dummy ?= {}
 
 class Pegex.Parser
-  version: '0.0.48'
-
   constructor: ({@grammar, @receiver, @debug})->
     @grammar? or
       throw "Pegex.Parser object requires a grammar attribute"
@@ -14,9 +12,10 @@ class Pegex.Parser
     @debug ?=
       process?.env.PEGEX_DEBUG ||
       Pegex.Parser.Debug ? off
+    # XXX @debug=on
     @throw_on_error ?= on
 
-  parse: (input, start) ->
+  parse: (input, start)->
     start = start.replace(/-/g, '_') if start
 
     @position = 0
@@ -79,6 +78,7 @@ class Pegex.Parser
     match[0]
 
   match_next: (next)->
+    # XXX say "match_next #{next}"
     {rule, method, kind} = next
     min = next['+min']
     max = next['+max']
@@ -131,6 +131,8 @@ class Pegex.Parser
     [ rule.action.call(@receiver, match...) ]
 
   match_ref: (ref, parent)->
+    # XXX say "match_ref #{ref}"
+    @ref1 = ref
     rule = @grammar.tree[ref] or throw "No rule defined for '#{ref}'"
     match = @match_next(rule)
     return unless match
@@ -143,6 +145,7 @@ class Pegex.Parser
     [ rule.action.call @receiver, match... ]
 
   match_rgx: (regexp)->
+    # XXX say "match_rgx #{@ref1} #{regexp} '#{@buffer.substr(@position)}'"
     re = new RegExp("^#{regexp}", 'g')
     m = re.exec @buffer.substr(@position)
     return unless m?
@@ -152,7 +155,7 @@ class Pegex.Parser
 
     captures = []
     for num in [1...(m.length)]
-      captures.push(m[num])
+      captures.push(m[num] || '')
     captures = [ captures ] if m.length > 2
     return captures
 
@@ -181,7 +184,7 @@ class Pegex.Parser
   match_err: (error)->
     @throw_error error
 
-  match_code: (code) ->
+  match_code: (code)->
     method = "match_rule_#{code}"
     method.call @
 
@@ -198,12 +201,12 @@ class Pegex.Parser
     snippet = snippet.replace /\n/g, '\\n'
     console.warn "#{i1} #{action}#{i2}>#{snippet}<"
 
-  throw_error: (msg) ->
+  throw_error: (msg)->
     @format_error msg
     return 0 unless @throw_on_error
     throw @error
 
-  format_error: (msg) ->
+  format_error: (msg)->
     position = @farthest
     lines = (@buffer.substr 0, position).match /\n/g
     line = if lines? then lines.length + 1 else 1

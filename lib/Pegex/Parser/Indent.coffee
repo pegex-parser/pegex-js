@@ -1,3 +1,3 @@
 require '../../Pegex/Parser'
 
-global.Pegex.Parser.Indent = exports.Indent = class Indent extends Pegex.Parser
+class Pegex.Parser.Indent extends Pegex.Parser

@@ -1,11 +1,11 @@
 require '../Pegex'
 
-global.Pegex.Receiver = exports.Receiver = class Receiver
+class Pegex.Receiver
   constructor: (a = {})->
     {@wrap} = a
     @wrap ?= no
 
-  flatten: (array, times) ->
+  flatten: (array, times)->
     times ?= -1
     return array unless times--
     result = []

@@ -6,8 +6,7 @@ license:   MIT
 copyright: 2010-2015
 ###
 
-global.Pegex =
-class Pegex
+class global.Pegex
   VERSION: '0.0.3'
 
 require './Pegex/Parser'

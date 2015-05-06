@@ -1,7 +1,6 @@
 require '../../Pegex/Grammar'
 
-Pegex.Pegex ?= ->
-class Pegex.Pegex.Grammar extends Pegex.Grammar
+class (Pegex.Pegex?=->).Grammar extends Pegex.Grammar
 
   text: ->
     '../pegex-pgx/pegex.pgx'

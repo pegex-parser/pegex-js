@@ -1,7 +1,7 @@
 require '../Pegex'
 
 class Pegex.Input
-  constructor: (a = {}) ->
+  constructor: (a = {})->
     {@string} = a
     {@file} = a
     {@handle} = a

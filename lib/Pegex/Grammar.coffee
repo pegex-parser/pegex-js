@@ -1,7 +1,7 @@
 require '../Pegex'
 
 class Pegex.Grammar
-  constructor: (_ = {}) ->
+  constructor: (_ = {})->
     {@file, @text, @tree} = _
     @make_tree
     @
@@ -19,4 +19,4 @@ class Pegex.Grammar
     @tree = compiler.compile(@text).tree
 
   # TODO later
-  # compile_into_module: (module) ->
+  # compile_into_module: (module)->
