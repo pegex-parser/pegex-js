@@ -5,7 +5,7 @@ class Pegex.Tree.Wrap extends Pegex.Receiver
 
   gotrule: (got)->
     if not got?
-      {}  # () in Perl
+      return Pegex.Constant.Dummy
     else
       result = {}
       result[@parser.rule] = got

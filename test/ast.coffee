@@ -30,7 +30,6 @@ a:
 - zzz
 
 === Single Regex - No Capture
---- SKIPX
 --- grammar
 a: /x*y*z*<EOL>/
 --- input
@@ -75,7 +74,6 @@ a:
   - zzz
 
 === + Modifier
---- SKIPX
 --- grammar
 a: ( <b> <c> )+ <EOL>
 b: /(x*)/
@@ -90,7 +88,6 @@ a:
     - c: y
 
 === Empty regex group plus rule
---- SKIPX
 --- grammar
 a: <b>* <c> <EOL>
 b: /xxx/
@@ -131,7 +128,6 @@ grammar:
 
 
 === Rule to Rule to Rule
---- SKIPX
 --- grammar
 a: <b>
 b: <c>*

@@ -1,8 +1,7 @@
 require '../Pegex/Input'
 require '../Pegex/Optimizer'
 
-Pegex.Constant ?= {}
-Pegex.Constant.Dummy ?= {}
+(Pegex.Constant?={}).Dummy?={}
 
 class Pegex.Parser
   constructor: ({@grammar, @receiver, @debug})->
@@ -22,9 +21,9 @@ class Pegex.Parser
     @position = 0
     @farthest = 0
 
-    @input = if input instanceof Pegex.Input \
-      then input \
-      else new Pegex.Input string: input
+    @input = if typeof input is 'string' \
+      then new Pegex.Input string: input
+      else input
 
     @input.open() \
       unless @input._is_open
@@ -143,7 +142,9 @@ class Pegex.Parser
 
     # XXX Possible API mismatch.
     # Not sure if we should "splat" the $match.
-    [ rule.action.call @receiver, match... ]
+    ret = rule.action.call @receiver, match...
+    return [] if ret == Pegex.Constant.Dummy
+    return [ret]
 
   match_rgx: (regexp)->
     # XXX say "match_rgx #{@ref1} #{regexp} '#{@buffer.substr(@position)}'"
