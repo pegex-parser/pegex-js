@@ -1,12 +1,18 @@
 # Log a message with a color.
-global.log = (message, color, explanation) ->
-  console.log color + message + reset + ' ' + (explanation or '')
+global.log = (message='', color, explanation) ->
+  console.log (color or reset) + message + reset + ' ' + (explanation or '')
 # Easy print
 global.say = console.log
 # Debugging
+global.jjj = ->
+  console.log JSON.stringify arguments
+  process.exit 1
+global.yyy = (a)->
+  console.log a
+  return a
 global.xxx = ->
   console.log.apply console, arguments
-  process.exit(0)
+  process.exit 1
 
 fs            = require 'fs'
 path          = require 'path'
@@ -42,9 +48,17 @@ global.test = (description, fn) ->
     fn.call(fn)
     ++passedTests
   catch e
-    e.description = description if description?
-    e.source      = fn.toString() if fn.toString?
-    failures.push filename: currentFile, error: e
+    failure =
+      filename: currentFile
+      error: e
+    if typeof e is 'string'
+      failure.error_message = e
+    else if typeof e is 'object'
+      for k, v in e
+        failure[k] = v
+    failure.description = description if description?
+    failure.source = fn.toString() if fn.toString?
+    failures.push failure
 
 # See http://wiki.ecmascript.org/doku.php?id=harmony:egal
 egal = (a, b) ->
@@ -71,17 +85,21 @@ process.on 'exit', ->
   message = "passed #{passedTests} tests in #{time} seconds#{reset}"
   return log(message, green) unless failures.length
   log "failed #{failures.length} and #{message}", red
+  num = 1
   for fail in failures
-    {error, filename}  = fail
-    jsFilename         = filename.replace(/\.coffee$/,'.js')
-    match              = error.stack?.match(new RegExp(fail.file+":(\\d+):(\\d+)"))
-    match              = error.stack?.match(/on line (\d+):/) unless match
-    [match, line, col] = match if match
-    console.log ''
-    log "  #{error.description}", red if error.description
-    log "  #{error.stack}", red
-    log "  #{jsFilename}: line #{line ? 'unknown'}, column #{col ? 'unknown'}", red
-    console.log "  #{error.source}" if error.source
+    log Array(80).join '-'
+    log "Failure ##{num++}:"
+    log "  Test File: #{fail.filename}"
+    log "  Test Desc: #{fail.description}"
+    log "  Error Msg: #{fail.error_message}"
+#     match              = fail.stack?.match(new RegExp(fail.file+":(\\d+):(\\d+)"))
+#     match              = fail.stack?.match(/on line (\d+):/) unless match
+#     [match, line, col] = match if match
+#     log ' '
+#     log "  #{fail.description}", red if fail.description
+#     log "  #{fail.stack}", red if fail.stack
+#     log "  #{fail.filename}: line #{line ? 'unknown'}, column #{col ? 'unknown'}", red
+#     log "  #{fail.source}" if fail.source
   return
 
 # Run every test requested, recording failures.

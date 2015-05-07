@@ -36,7 +36,6 @@ class Pegex.Optimizer
         if kind == 'ref'
           rule = node.rule or throw ""
           if method = @grammar["rule_#{rule}"]?
-            console.log node
             node.method = @make_method_wrapper method
           else if not @grammar.tree[rule]?
             if method = @grammar[rule]?

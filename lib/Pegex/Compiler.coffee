@@ -46,6 +46,10 @@ class Pegex.Compiler
       rule = object['.ref']
       if @tree[rule]?
         @combinate_rule rule
+      else
+        if regex = Pegex.Grammar.Atoms::atoms()[rule]
+          @tree[rule] = '.rgx': regex
+          @combinate_rule rule
     else if object['.any']?
       for elem in object['.any']
         @combinate_object elem

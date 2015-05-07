@@ -4,6 +4,9 @@ YAML = require 'js-yaml'
 
 parse = (grammar, input) ->
   parser = pegex grammar
+  Pegex.xxx = false
+  parser.grammar.make_tree() unless parser.grammar.tree?
+  Pegex.xxx = true
   parser.parse input
 
 data = parse_testml_data '''
@@ -36,7 +39,6 @@ xxxyyyyzzz
 a: []
 
 === A subrule
---- SKIPX
 --- grammar
 a: <b> /(y+)/ <EOL>
 b: /(x+)/

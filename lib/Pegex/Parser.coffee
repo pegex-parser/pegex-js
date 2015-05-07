@@ -12,8 +12,9 @@ class Pegex.Parser
     @debug ?=
       process?.env.PEGEX_DEBUG ||
       Pegex.Parser.Debug ? off
-    # XXX @debug=on
     @throw_on_error ?= on
+
+    # @debug=on
 
   parse: (input, start)->
     start = start.replace(/-/g, '_') if start
