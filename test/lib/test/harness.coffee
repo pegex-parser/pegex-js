@@ -117,8 +117,15 @@ exports.run = (paths) ->
       require.main = {}
       CoffeeScript.run code, {filename}
     catch error
+      # say error.code
+      # say error.name
+      # say error.stack
       global.color = red
-      failures.push {filename, error}
+      failures.push {
+        filename: filename
+        message: error.message
+        description: error.code
+      }
     log "Running #{color}#{filename}#{reset}"
 
   return not failures.length
