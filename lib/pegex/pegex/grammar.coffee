@@ -1,4 +1,4 @@
-require '../../Pegex/Grammar'
+require '../../pegex/grammar'
 
 class (Pegex.Pegex?=->).Grammar extends Pegex.Grammar
 

@@ -1,4 +1,4 @@
-require '../Pegex/Receiver'
+require '../pegex/receiver'
 
 class Pegex.Tree extends Pegex.Receiver
 

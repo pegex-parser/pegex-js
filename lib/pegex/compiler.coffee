@@ -1,7 +1,7 @@
-require '../Pegex/Parser'
-require '../Pegex/Pegex/Grammar'
-require '../Pegex/Pegex/AST'
-require '../Pegex/Grammar/Atoms'
+require '../pegex/parser'
+require '../pegex/pegex/grammar'
+require '../pegex/pegex/ast'
+require '../pegex/grammar/atoms'
 
 class Pegex.Compiler
   constructor: ->

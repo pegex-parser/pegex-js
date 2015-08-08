@@ -1,5 +1,5 @@
-require '../Pegex/Input'
-require '../Pegex/Optimizer'
+require '../pegex/input'
+require '../pegex/optimizer'
 
 (Pegex.Constant?={}).Dummy?={}
 

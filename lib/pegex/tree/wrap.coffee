@@ -1,5 +1,5 @@
-require '../../Pegex/Receiver'
-require '../../Pegex/Tree'
+require '../../pegex/receiver'
+require '../../pegex/tree'
 
 class Pegex.Tree.Wrap extends Pegex.Receiver
 

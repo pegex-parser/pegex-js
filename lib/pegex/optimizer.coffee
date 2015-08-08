@@ -94,7 +94,7 @@ Warning:
       return result
 
   set_max_parse: ->
-    require '../Pegex/Parser'
+    require '../pegex/parser'
     maxparse = @parser.maxparse
     method = Pegex.Parser.match_ref
     counter = 0

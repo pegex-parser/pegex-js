@@ -1,4 +1,4 @@
-require '../Pegex'
+require '../pegex'
 
 class Pegex.Grammar
   constructor: (_ = {})->
@@ -14,7 +14,7 @@ class Pegex.Grammar
         @text = fs.readFileSync(@file)
       else
         throw "Can't create a grammar. No tree or text or file."
-    require '../Pegex/Compiler'
+    require '../pegex/compiler'
     compiler = new Pegex.Compiler
     @tree = compiler.compile(@text).tree
 

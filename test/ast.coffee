@@ -1,4 +1,4 @@
-{pegex} = require '../lib/Pegex'
+{pegex} = require '../lib/pegex'
 require './lib/parse-testml-data'
 YAML = require 'js-yaml'
 

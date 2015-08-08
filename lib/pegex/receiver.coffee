@@ -1,4 +1,4 @@
-require '../Pegex'
+require '../pegex'
 
 class Pegex.Receiver
   constructor: (a = {})->

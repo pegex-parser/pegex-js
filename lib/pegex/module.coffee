@@ -1,5 +1,5 @@
-require '../Pegex/Grammar'
-require '../Pegex/Parser'
+require '../pegex/grammar'
+require '../pegex/parser'
 
 class Pegex.Module
 

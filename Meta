@@ -1,12 +1,12 @@
 =meta: 0.0.2
 
-name: Pegex
+name: pegex
 version: 0.1.0
 abstract: Acmeist PEG Parser Framework
 homepage: http://pegex.org
 tag: [pegex, parsing, language, acmeism]
 license: MIT
-copyright: 2010-2014
+copyright: 2010-2015
 
 author:
   name: Ingy döt Net
@@ -23,13 +23,12 @@ devel:
 
 =npm:
   name: pegex
-  main: ./lib/Pegex
+  main: ./lib/pegex
   directories:
     lib: ./lib
   engines:
     node: '>=0.4.0'
   devDependencies:
     coffee-script: '>=1.3.3'
-    js-yaml: '>=1.0.2'
   scripts:
     test: coffee -e '(require "./test/lib/Test/Harness").run()' test

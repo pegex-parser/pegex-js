@@ -1,5 +1,5 @@
-require '../../Pegex/Tree'
-require '../../Pegex/Grammar/Atoms'
+require '../../pegex/tree'
+require '../../pegex/grammar/atoms'
 
 class Pegex.Pegex.AST extends Pegex.Tree
   constructor: ->
