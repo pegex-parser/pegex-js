@@ -39,7 +39,7 @@ install: distdir
 	make clean
 
 doc:
-	swim --to=pod --complete=1 --wrap=1 doc/$(NAME).swim > ReadMe.pod
+	swim --to=pod --complete --wrap doc/$(NAME).swim > ReadMe.pod
 
 npm:
 	./.pkg/bin/make-npm
