@@ -71,7 +71,7 @@ publish-dryrun: check-release dist
 	rm $(DIST)
 
 clean purge:
-	rm -fr name $(DIST) $(DISTDIR)
+	rm -fr npm name $(DIST) $(DISTDIR)
 
 upgrade:
 	(PKGREPO=$(PWD) make -C ../javascript-pkg do-upgrade)

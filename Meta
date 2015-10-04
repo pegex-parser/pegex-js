@@ -23,7 +23,7 @@ devel:
 
 =npm:
   name: pegex
-  main: ./lib/pegex
+  # main: ./lib/pegex
   directories:
     lib: ./lib
   engines:

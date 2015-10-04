@@ -8,8 +8,8 @@ fs = require 'fs'
 data = YAML.load(String(fs.readFileSync 'Meta'))
 
 # Rework data for npm
-npm = data.npm
-delete data.npm
+npm = data['=npm']
+delete data['=npm']
 delete data.copyright
 for k, v of npm
   data[k] = v

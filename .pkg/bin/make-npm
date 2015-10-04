@@ -9,7 +9,11 @@ mkdir npm
   set -x
   cp Changes npm
   for coffee in $(find lib | grep -E '\.coffee$'); do
-    js="npm/${coffee/\.coffee/.js}"
+    if [[ $coffee == 'lib/index.coffee' ]]; then
+      js="npm/index.js"
+    else
+      js="npm/${coffee/\.coffee/.js}"
+    fi
     mkdir -p "$(dirname $js)"
     coffee --print --compile "$coffee" > "$js"
   done
@@ -19,19 +23,19 @@ mkdir npm
   ./.pkg/bin/make-package-json > npm/package.json
 )
 
-for kwim in $(find doc -type f -name '*.kwim'); do
-  md="${kwim/.kwim/.md}"
+for swim in $(find doc -type f -name '*.swim'); do
+  md="${swim/.swim/.md}"
   md="npm/$md"
   mkdir -p "$(dirname "$md")"
-  if grep '^====' "$kwim" &> /dev/null; then
+  if grep '^====' "$swim" &> /dev/null; then
     (
       set -x
-      kwim --to=md --complete --wrap "$kwim" > "$md"
+      swim --to=md --complete --wrap "$swim" > "$md"
     )
   else
     (
       set -x
-      kwim --to=md --complete --wrap "$kwim" > "$md"
+      swim --to=md --complete --wrap "$swim" > "$md"
     )
   fi
 done
