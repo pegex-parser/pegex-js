@@ -23,7 +23,7 @@
 #   = digits:[0-9]+ { return parseInt(digits.join(""), 10); }
 
 # Here is the closest Pegex analog:
-{pegex} = require '../lib/Pegex'
+{pegex} = require '../lib/pegex'
 
 grammar = """
 # start: additive     # Not needed. First rule is start rule by default.

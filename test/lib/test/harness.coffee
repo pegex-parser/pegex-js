@@ -17,7 +17,7 @@ global.xxx = ->
 
 fs            = require 'fs'
 path          = require 'path'
-CoffeeScript  = require 'coffee-script'
+CoffeeScript  = require 'coffeescript'
 {exec}        = require 'child_process'
 
 # ANSI Terminal Colors.

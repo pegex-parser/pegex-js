@@ -22,7 +22,7 @@ class Pegex.Parser
     @farthest = 0
 
     @input = if typeof input is 'string' \
-      then new Pegex.Input string: input
+      then new Pegex.Input string: input \
       else input
 
     @input.open() \

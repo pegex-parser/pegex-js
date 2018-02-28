@@ -2,7 +2,8 @@ require '../../pegex/tree'
 require '../../pegex/grammar/atoms'
 
 class Pegex.Pegex.AST extends Pegex.Tree
-  constructor: ->
+  constructor: (args...)->
+    super(args...)
     @atoms = (new Pegex.Grammar.Atoms).atoms
     @extra_rules = {}
 
@@ -63,7 +64,7 @@ class Pegex.Pegex.AST extends Pegex.Tree
 
   get_group: (group)->
     get = (it)->
-      return unless typeof it is 'object'
+      return [] unless typeof it is 'object'
       if it instanceof Array
         a = []
         for x in it

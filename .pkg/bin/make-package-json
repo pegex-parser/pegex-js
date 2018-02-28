@@ -1,17 +1,66 @@
 #!/usr/bin/env coffee
 
-#!/usr/bin/env coffee
-
-YAML = require 'js-yaml'
+yaml = require 'js-yaml'
 fs = require 'fs'
 
-data = YAML.load(String(fs.readFileSync 'Meta'))
+meta = yaml.load String fs.readFileSync 'Meta'
 
-# Rework data for npm
-npm = data['=npm']
-delete data['=npm']
-delete data.copyright
-for k, v of npm
-  data[k] = v
+npm = meta['=npm'] || {}
 
-console.log JSON.stringify data, null, 2
+plan =
+  name: 'name'
+  description: 'abstract'
+  version: 'version'
+  keywords: 'tag'
+  homepage: 'homepage'
+  bugs:
+    url: 'devel/bug'
+  repository:
+    type: '"git"'
+    url: 'devel/git'
+  license: 'license'
+  author:
+    name: 'author/name'
+    email: 'author/email'
+    url: 'author/homepage'
+  engines: 'engines'
+  dependencies: 'dependencies'
+  devDependencies: 'devDependencies'
+  scripts: 'scripts'
+  directories: 'directories'
+
+make_package_json = ->
+  pkg = {}
+
+  for key, val of plan
+    if npm[key]
+      pkg[key] = npm[key]
+    else if typeof val == 'object'
+      if value = get_object val
+        pkg[key] = value
+    else
+      if value = get_key val
+        pkg[key] = value
+
+  return pkg
+
+get_key = (key)->
+  if key.match /^"/
+    return key.replace /"/g, ''
+  if key.match /\//
+    [key1, key2] = key.split '/'
+    val = meta[key1]
+    return unless val
+    return val[key2]
+  return meta[key]
+
+get_object = (plan)->
+  obj = {}
+  for key, val of plan
+    if value = get_key val
+      obj[key] = value
+  return unless Object.keys(obj).length
+  return obj
+
+
+console.log JSON.stringify make_package_json(), null, 2

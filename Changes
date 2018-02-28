@@ -1,4 +1,9 @@
 ---
+version: 0.1.1
+date:    Tue Feb 27 16:28:49 PST 2018
+changes:
+- Updated for coffeescript 2
+---
 version: 0.0.1
 date:    Mon May 19 23:06:11 PDT 2014
 changes:

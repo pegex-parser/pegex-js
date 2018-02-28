@@ -10,8 +10,8 @@
 # Originally inspired by:
 #   https://github.com/dmajda/pegjs/blob/master/examples/arithmetics.pegjs
 
-{pegex} = require '../lib/Pegex'
-require '../lib/Pegex/Receiver'
+{pegex} = require '../lib/pegex'
+require '../lib/pegex/receiver'
 
 calculator_pegex_grammar = """
 # This is a grammar that will match an arithmetic expression like:

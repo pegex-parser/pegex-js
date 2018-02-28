@@ -13,7 +13,7 @@ class Pegex.Optimizer
     @set_max_parse if @parser.maxparse?
     @extra = {}
     for name, node of tree
-      continue if typeof node is String
+      continue if typeof node is 'string'
       @optimize_node node
     @optimize_node '.ref': start
     extra = delete @extra

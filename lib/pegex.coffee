@@ -3,7 +3,7 @@ name:      Pegex
 abstract:  Acmeist PEG Parsing Framework
 author:    Ingy döt Net <ingy@ingy.net>
 license:   MIT
-copyright: 2010-2015
+copyright: 2010-2018
 ###
 
 class global.Pegex
