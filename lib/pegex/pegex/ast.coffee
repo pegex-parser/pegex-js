@@ -21,6 +21,8 @@ class Pegex.Pegex.AST extends Pegex.Tree
   got_meta_section: (got)->
     meta = {}
     for next in got
+      continue if next == ''
+
       [key, val] = next
       key = "+#{key}"
       old = meta[key]

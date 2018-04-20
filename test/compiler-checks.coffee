@@ -176,6 +176,16 @@ a:
 +include:
 - bar
 - baz
+
+=== Grammar with leading comment
+--- grammar
+\\# Comment
+a: 'a'
+
+--- yaml
+a:
+  .rgx: a
+
 '''
 
 tests = []
