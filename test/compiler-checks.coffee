@@ -177,6 +177,15 @@ a:
 - bar
 - baz
 
+=== Dashes in rule names
+--- grammar
+\\# Comment
+a-b: 'a'
+
+--- yaml
+a_b:
+  .rgx: a
+
 === Grammar with leading comment
 --- grammar
 \\# Comment

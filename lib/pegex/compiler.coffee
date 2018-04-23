@@ -70,11 +70,12 @@ class Pegex.Compiler
       # re = re.replace /(?<!\\)(~+)/g, (m, $1)->
       re = re.replace /(~+)/g, (m, $1)->
         '<ws' + $1.length + '>'
-      re = re.replace /<(\w+)>/, (m, $1) =>
-        if @tree[$1]?
-          @tree[$1]['.rgx']
-        else if atoms[$1]?
-          atoms[$1]
+      re = re.replace /<([-\w]+)>/, (m, $1) =>
+        name = $1.replace /-/g, '_'
+        if @tree[name]?
+          @tree[name]['.rgx']
+        else if atoms[name]?
+          atoms[name]
         else
           throw "'#{$1}' not defined in the grammar"
       break if re == regexp['.rgx']
