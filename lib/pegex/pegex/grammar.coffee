@@ -399,7 +399,7 @@ class (Pegex.Pegex?=->).Grammar extends Pegex.Grammar
              },
              {
                 "+max" : 1,
-                ".ref" : "whitespace_must_start"
+                ".ref" : "whitespace_start"
              },
              {
                 "+min" : 0,
@@ -508,13 +508,13 @@ class (Pegex.Pegex?=->).Grammar extends Pegex.Grammar
           ".rgx" : "((?:[a-zA-Z][a-zA-Z0-9]*(?:[\\-_][a-zA-Z0-9]+)*|\\-+|_+)(?=[^\\w\\-]))[\\ \\t]*:(?:\\s|\\#.*(?:\\n|$))*"
        },
        "whitespace_maybe" : {
-          ".rgx" : "(?:\\s|\\#.*(?:\\n|$))*\\-(?=[\\ /])"
+          ".rgx" : "(?:\\s|\\#.*(?:\\n|$))*\\-(?=[\\ /\\r\\n])"
        },
        "whitespace_must" : {
-          ".rgx" : "(?:\\s|\\#.*(?:\\n|$))+(?:\\+|\\-\\-)(?=[\\ /])"
+          ".rgx" : "(?:\\s|\\#.*(?:\\n|$))+(?:\\+|\\-\\-)(?=[\\ /\\r\\n])"
        },
-       "whitespace_must_start" : {
-          ".rgx" : "\\+(?=[\\ /])"
+       "whitespace_start" : {
+          ".rgx" : "([\\+\\-])(?![\\-\\~])"
        },
        "whitespace_token" : {
           ".rgx" : "((?:\\+|\\-|\\-\\-|\\~|\\~\\~))(?=(?:\\s|\\#.*(?:\\n|$))+)"

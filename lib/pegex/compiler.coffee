@@ -71,11 +71,16 @@ class Pegex.Compiler
       re = re.replace /(~+)/g, (m, $1)->
         '<ws' + $1.length + '>'
       re = re.replace /<([-\w]+)>/, (m, $1) =>
-        name = $1.replace /-/g, '_'
-        if @tree[name]?
-          @tree[name]['.rgx']
-        else if atoms[name]?
-          atoms[name]
+        key = $1.replace /-/g, '_'
+        if @tree[key]?
+          if @tree[key]['.rgx']?
+            @tree[key]['.rgx']
+          else if @tree[key]['.ref']?
+            "<#{@tree[key]['.ref']}>"
+          else
+            throw "'#{key}' not defined as a single RE"
+        else if atoms[key]?
+          atoms[key]
         else
           throw "'#{$1}' not defined in the grammar"
       break if re == regexp['.rgx']
@@ -106,3 +111,5 @@ class Pegex.Compiler
 
   to_js: ->
     (require 'util').format @tree
+
+# vim: sw=2:

@@ -177,15 +177,6 @@ a:
 - bar
 - baz
 
-=== Dashes in rule names
---- grammar
-\\# Comment
-a-b: 'a'
-
---- yaml
-a_b:
-  .rgx: a
-
 === Grammar with leading comment
 --- grammar
 \\# Comment
@@ -194,6 +185,50 @@ a: 'a'
 --- yaml
 a:
   .rgx: a
+
+=== Dashes in rule names
+--- grammar
+a-b: 'a'
+
+--- yaml
+a_b:
+  .rgx: a
+
+=== Escaping single quotes
+--- grammar
+a: /( '=' | '||=' )/
+
+--- yaml
+a:
+  .rgx: (=|\\|\\|=)
+
+=== Alias name rules
+--- grammar
+a: /( b )/
+b: c
+c: /d/
+
+--- yaml
+a:
+  .rgx: (d)
+
+=== Whitespace rule expansion in regex
+--- grammar
+a: / 'b' +
+     'c' -
+   /
+
+--- yaml
+a:
+  .rgx: b\\s+c\\s*
+
+=== More whitespace rule expansion in regex
+--- grammar
+a: /+ '==' +/
+
+--- yaml
+a:
+  .rgx: \\s+==\\s+
 
 '''
 
