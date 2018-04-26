@@ -3,17 +3,14 @@ require '../pegex/receiver'
 class Pegex.Tree extends Pegex.Receiver
 
   gotrule: (got)->
-    if not got?
-      ''  #XXX () in Perl
-    else if @parser.parent['-wrap']
-      result = {}
-      result[@parser.rule] = got
-      result
-    else
-      got
+    return if got == undefined
+
+    return "#{@parser.rule}": got \
+      if @parser.parent['-wrap']
+
+    return got
 
   final: (got)->
-    if got?
-      got
-    else
-      []
+    return got if got != undefined
+
+    return []

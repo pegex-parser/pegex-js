@@ -4,17 +4,11 @@ require '../../pegex/tree'
 class Pegex.Tree.Wrap extends Pegex.Receiver
 
   gotrule: (got)->
-    if not got?
-      return Pegex.Constant.Dummy
-    else
-      result = {}
-      result[@parser.rule] = got
-      result
+    return if got == undefined
+
+    return "#{@parser.rule}": got
 
   final: (got)->
-    if got?
-      got
-    else
-      result = {}
-      result[@parser.rule] = []
-      result
+    return got if got != undefined
+
+    return "#{@parser.rule}": []
