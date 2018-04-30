@@ -1,8 +1,6 @@
 require '../pegex/input'
 require '../pegex/optimizer'
 
-(Pegex.Constant?={}).Dummy?={}
-
 class Pegex.Parser
   constructor: ({@grammar, @receiver, @debug})->
     @grammar? or
@@ -75,7 +73,7 @@ class Pegex.Parser
       @parent = {}
       match = [ @receiver.final(match...) ]
 
-    match[0]
+    return match[0]
 
   match_next: (next)->
     # XXX say "match_next #{next}"
@@ -112,13 +110,8 @@ class Pegex.Parser
       @farthest = position \
         if (@position = position) > @farthest
 
-    if result
-      if next['-skip']
-        return []
-      else
-        return match
-    else
-      return 0
+    return 0 unless result
+    return if next['-skip'] then [] else match
 
   match_rule: (position, match=[])->
     @farthest = position \
@@ -128,7 +121,8 @@ class Pegex.Parser
     rule = @grammar.tree[ref] \
       or throw "No rule defined for '#{ref}'"
 
-    [ rule.action.call(@receiver, match...) ]
+    ret = rule.action.call(@receiver, match...)
+    return if ret == undefined then [] else [ ret ]
 
   match_ref: (ref, parent)->
     # XXX say "match_ref #{ref}"
@@ -136,15 +130,12 @@ class Pegex.Parser
     rule = @grammar.tree[ref] or throw "No rule defined for '#{ref}'"
     match = @match_next(rule)
     return unless match
-    return Pegex.Constant.Dummy unless rule.action?
+    return [] unless rule.action?
     @rule = ref
     @parent = parent
 
-    # XXX Possible API mismatch.
-    # Not sure if we should "splat" the $match.
     ret = rule.action.call @receiver, match...
-    return [] if ret == Pegex.Constant.Dummy
-    return [ret]
+    return if ret == undefined then [] else [ ret ]
 
   match_rgx: (regexp)->
     # XXX say "match_rgx #{@ref1} #{regexp} '#{@buffer.substr(@position)}'"
@@ -159,6 +150,7 @@ class Pegex.Parser
     for num in [1...(m.length)]
       captures.push(m[num] || '')
     captures = [ captures ] if m.length > 2
+
     return captures
 
   match_all: (list)->

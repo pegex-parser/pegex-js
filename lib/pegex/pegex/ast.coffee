@@ -93,7 +93,7 @@ class Pegex.Pegex.AST extends Pegex.Tree
     return node
 
   got_quoted_regex: (got)->
-    got = got.replace /([^\w\`\%\:\<\/\,\=\;])/g, '$1'
+    got = got.replace /([^\w\`\%\:\<\/\,\=\;])/g, '\\$1'
     return '.rgx': got
 
   got_regex_rule_reference: (got)->
@@ -107,8 +107,8 @@ class Pegex.Pegex.AST extends Pegex.Tree
     return '.rgx': '<__>'
 
   got_whitespace_start: (got)->
-    rule = if got eq '+' then '__' else '_'
-    return '.rgx': "<#{rule}"
+    rule = if got == '+' then '__' else '_'
+    return '.rgx': "<#{rule}>"
 
   got_regular_expression: (got)->
     if got.length == 2
@@ -125,9 +125,10 @@ class Pegex.Pegex.AST extends Pegex.Tree
         else
           throw e
       else
+        e = e.replace /\(([ism]?\:|\=|\!)/g, '(?$1'
         set.push e
+
     regex = set.join ''
-    regex = regex.replace /\(([ism]?\:|\=|\!)/g, '(?$1'
     return '.rgx': regex
 
   got_whitespace_token: (got)->
