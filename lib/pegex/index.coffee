@@ -7,7 +7,7 @@ copyright: 2010-2018
 ###
 
 class global.Pegex
-  version: '0.0.3'
+  version: '0.1.4'
 
 exports.pegex = (grammar, receiver)->
   throw "Argument 'grammar' required in function 'pegex'" \
