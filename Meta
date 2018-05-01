@@ -22,6 +22,7 @@ devel:
   irc: irc.freenode.net#pegex
 
 =npm:
+  main: ./lib/pegex/index.js
   directories:
     lib: ./lib
   engines:
