@@ -1,4 +1,9 @@
 ---
+version: 0.1.5
+date:    Wed May  2 16:09:13 PDT 2018
+changes:
+- Fixed a bug when reading a pgx grammar file
+---
 version: 0.1.4
 date:    Tue May  1 11:56:19 PDT 2018
 changes:
