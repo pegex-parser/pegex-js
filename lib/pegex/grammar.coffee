@@ -11,7 +11,7 @@ class Pegex.Grammar
     if ! @text?
       if @file?
         require 'fs'
-        @text = fs.readFileSync(@file)
+        @text = fs.readFileSync(@file).toString()
       else
         throw "Can't create a grammar. No tree or text or file."
     require '../pegex/compiler'
