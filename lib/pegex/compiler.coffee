@@ -66,10 +66,6 @@ class Pegex.Compiler
     atoms = Pegex.Grammar.Atoms::atoms()
     re = regexp['.rgx']
     loop
-      # XXX - JS doesn't support negative lookbehind assertion
-      # re = re.replace /(?<!\\)(~+)/g, (m, $1)->
-      re = re.replace /(~+)/g, (m, $1)->
-        '<ws' + $1.length + '>'
       re = re.replace /<([-\w]+)>/, (m, $1) =>
         key = $1.replace /-/g, '_'
         if @tree[key]?
