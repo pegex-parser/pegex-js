@@ -17,6 +17,7 @@ class Pegex.Grammar.Atoms
     TAB     : '\\t'
     WS      : '\\s'
     NS      : '\\S'
+    NL      : '\\n'
     BREAK   : '\\n'
     CR      : '\\r'
     EOL     : '\\r?\\n'
