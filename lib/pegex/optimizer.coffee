@@ -35,7 +35,7 @@ class Pegex.Optimizer
         node.kind = kind
         if kind == 'ref'
           rule = node.rule or throw ""
-          if method = @grammar["rule_#{rule}"]?
+          if (method = @grammar["rule_#{rule}"])?
             node.method = @make_method_wrapper method
           else if not @grammar.tree[rule]?
             if method = @grammar[rule]?
@@ -69,7 +69,8 @@ Warning:
       # xxx node
 
   make_method_wrapper: (method)->
-    return (parser, ref, parent)->
+    return (ref, parent)->
+      parser = this
       parser.rule = ref
       parser.parent = parent
       method.call(
